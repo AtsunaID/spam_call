@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Call Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('{{ url_for("static", filename="background.jpg") }}') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 400px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.2); /* Efek kaca */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+        }
+        .container h2 {
+            text-align: center;
+            margin: 0;
+        }
+        .container label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .container input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .container button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .container button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .response div {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2); /* Efek kaca */
+            border-radius: 5px;
+        }
+        footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6); /* Efek transparan */
+            color: white;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <form class="container">
+        <h2>Spam Call And Sms Generator</h2>
+        <div>
+            <label for="nomor">Nomor Telepon:</label>
+            <input type="text" id="nomor" name="nomor" required>
+        </div>
+        <div>
+            <label for="jumlah">Jumlah Spam:</label>
+            <input type="number" id="jumlah" name="jumlah" required>
+        </div>
+        <button type="submit">Kirim Spam</button>
+        <div class="response">
+            <div id="live">Live: 0</div>
+            <div id="gagal">Gagal: 0</div>
+        </div>
+    </form>
+    <footer>
+        <p>Code by: Imam Arifin</p>
+    </footer>
+    <script>
+        document.querySelector("form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const nomor = document.getElementById("nomor").value;
+            const jumlah = document.getElementById("jumlah").value;
+            const liveElement = document.getElementById("live");
+            const gagalElement = document.getElementById("gagal");
+
+            fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `nomor=${nomor}&jumlah=${jumlah}`,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    liveElement.textContent = `Live: ${data.live}`;
+                    gagalElement.textContent = `Gagal: ${data.gagal}`;
+                })
+                .catch((error) => {
+                    gagalElement.textContent = "Gagal: Error!";
+                    console.error("Error:", error);
+                });
+        });
+    </script>
+</body>
+</html>
